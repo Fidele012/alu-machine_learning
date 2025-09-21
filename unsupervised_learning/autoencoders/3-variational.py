@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """ Variational Autoencoder"""
-
 import tensorflow.keras as keras
 
 
@@ -15,7 +14,6 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
                      representation
     Returns: encoder, decoder, auto
     """
-
     X_input = keras.Input(shape=(input_dims,))
     hidden_ly = keras.layers.Dense(units=hidden_layers[0], activation='relu')
     Y_prev = hidden_ly(X_input)
@@ -23,9 +21,12 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
         hidden_ly = keras.layers.Dense(units=hidden_layers[i],
                                        activation='relu')
         Y_prev = hidden_ly(Y_prev)
-    latent_ly = keras.layers.Dense(units=latent_dims, activation=None)
-    z_mean = latent_ly(Y_prev)
-    z_log_sigma = latent_ly(Y_prev)
+    
+    # Create separate layers for mean and log variance
+    z_mean_layer = keras.layers.Dense(units=latent_dims, activation=None)
+    z_log_sigma_layer = keras.layers.Dense(units=latent_dims, activation=None)
+    z_mean = z_mean_layer(Y_prev)
+    z_log_sigma = z_log_sigma_layer(Y_prev)
 
     def sampling(args):
         """Sampling similar points in latent space"""
@@ -52,7 +53,8 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
     output = last_ly(Y_prev)
     decoder = keras.Model(X_decode, output)
 
-    e_output = encoder(X_input)[-1]
+    # Use the sampled z (first output) for the autoencoder
+    e_output = encoder(X_input)[0]
     d_output = decoder(e_output)
     auto = keras.Model(X_input, d_output)
 
@@ -67,4 +69,3 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
 
     auto.compile(loss=vae_loss, optimizer='adam')
     return encoder, decoder, auto
-
