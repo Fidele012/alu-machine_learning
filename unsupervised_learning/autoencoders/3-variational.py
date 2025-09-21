@@ -21,7 +21,7 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
         hidden_ly = keras.layers.Dense(units=hidden_layers[i],
                                        activation='relu')
         Y_prev = hidden_ly(Y_prev)
-    
+
     # Create separate layers for mean and log variance
     z_mean_layer = keras.layers.Dense(units=latent_dims, activation=None)
     z_log_sigma_layer = keras.layers.Dense(units=latent_dims, activation=None)
@@ -67,5 +67,5 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
                                              axis=-1)
         return x_loss + kl_loss
 
-    auto.compile(loss=vae_loss, optimizer='adam')
+    auto.compile(optimizer='adam', loss=vae_loss)
     return encoder, decoder, auto
