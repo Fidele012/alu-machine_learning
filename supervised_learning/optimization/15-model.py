@@ -273,4 +273,15 @@ def model(
                         x_minbatch = Xs[start:end]
                         y_minbatch = Ys[start:end]
 
+                    feed_mini = {x: x_minbatch, y: y_minbatch}
+                    sess.run(train_op, feed_dict=feed_mini)
 
+                    if ((step_number + 1) % 100 == 0) and (step_number != 0):
+                        step_cost = sess.run(loss, feed_dict=feed_mini)
+                        step_accuracy = sess.run(accuracy, feed_dict=feed_mini)
+                        print("\tStep {}:".format(step_number + 1))
+                        print("\t\tCost: {}".format(step_cost))
+                        print("\t\tAccuracy: {}".format(step_accuracy))
+            sess.run(tf.assign(global_step, global_step + 1))
+            save_path = saver.save(sess, save_path)
+    return save_path
