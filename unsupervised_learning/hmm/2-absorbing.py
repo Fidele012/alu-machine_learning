@@ -49,20 +49,10 @@ def absorbing(P):
 
     # Check reachability using BFS/DFS or matrix powers
     # For each non-absorbing state, check if it can reach an absorbing state
-    
+
     # Method: Check if we can reach absorbing states from non-absorbing ones
     # Use repeated matrix multiplication (transitive closure)
     reachable = P > 0  # Boolean matrix of direct reachability
-    
-    # Compute transitive closure (paths of any length)
-    for _ in range(n):
-        reachable = reachable | (reachable @ reachable)
-    
-    # Check if every non-absorbing state can reach an absorbing state
-    for i in range(n):
-        if not absorbing_states[i]:
-            # State i is not absorbing, check if it can reach any absorbing state
-            if not np.any(reachable[i] & absorbing_states):
-                return False
 
-    return True
+    # Compute transitive closure (paths of any length)
+
